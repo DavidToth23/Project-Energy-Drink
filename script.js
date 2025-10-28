@@ -9,7 +9,7 @@ async function fetchList() {
 
     // 1. Preuzmi podatke iz 'my_lists' tabele
     let { data: lists, error } = await supabase
-        .from('my_lists')
+        .from('Energy Drinks')
         .select('*'); // Selektuj sve kolone
 
     if (error) {
