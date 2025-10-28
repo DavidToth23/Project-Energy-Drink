@@ -1,43 +1,38 @@
-// Ostavljamo placeholder ključeve jer su oni već ispravno uneti na Netlify-u
+// Ostavljamo placeholder ključeve
 const SUPABASE_URL = 'ZAMENI_ME_URL';
 const SUPABASE_ANON_KEY = 'ZAMENI_ME_ANON_KEY';
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Funkcija za preuzimanje i prikaz liste
 async function fetchList() {
     const listContainer = document.getElementById('list-container');
     
-    // 1. Preuzmi podatke iz 'Energy Drinks' tabele.
-    // Koristimo .select() za preuzimanje kolona, PLUS ugnježđeni SELECT za JOIN:
-    // 'brands(name)' traži da se spoji sa tabelom 'brands' i da se preuzme samo kolona 'name'.
+    // KORISTI NOVO IME TABELE: energy_drinks (BEZ NAVODNIKA I RAZMAKA)
     let { data: drinks, error } = await supabase
-        .from('Energy Drinks')
+        .from('energy_drinks') 
         .select(`
             rank,
             name,
-            brands(name) 
+            brands(name) // Pretpostavlja da se tabela brendova sada zove 'brands'
         `)
-        .order('rank', { ascending: true }); // Sortiraj po ranku, da bude redosled kao na slici
+        .order('rank', { ascending: true }); 
 
     if (error) {
-        listContainer.innerHTML = `<p style="color: red;">Greška pri preuzimanju podataka: ${error.message}. Proveri ime tabele ('Energy Drinks') i RLS.</p>`;
-        console.error(error);
+        listContainer.innerHTML = `<p style="color: red;">Greška: ${error.message}. Problem je možda i dalje u relaciji.</p>`;
+        console.error("Supabase Error:", error);
         return;
     }
 
     if (!drinks || drinks.length === 0) {
-        listContainer.innerHTML = '<p>Lista je prazna!</p>';
+        listContainer.innerHTML = '<p>Lista je prazna ili se nije uspešno povezala.</p>';
         return;
     }
 
-    // 2. Obriši poruku "Učitavam" i prikaži stavke liste
     listContainer.innerHTML = '';
     
     drinks.forEach(item => {
-        // Pristup nazivu brenda: Supabase vraća JOIN-ovane podatke kao objekat, 
-        // npr. item.brands = { name: 'Monster' }
-        const brandName = item.brands ? item.brands.name : 'Nepoznat brend';
+        // Pristup brandu
+        const brandName = item.brands ? item.brands.name : 'Nepoznat brend'; 
 
         const listItem = document.createElement('div');
         listItem.className = 'list-item';
@@ -52,5 +47,4 @@ async function fetchList() {
     });
 }
 
-// Pokreni funkciju kada se stranica učita
 fetchList();
