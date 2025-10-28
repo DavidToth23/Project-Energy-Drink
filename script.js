@@ -2,7 +2,7 @@
 const SUPABASE_URL = 'ZAMENI_ME_URL';
 const SUPABASE_ANON_KEY = 'ZAMENI_ME_ANON_KEY';
 
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function fetchList() {
     const listContainer = document.getElementById('list-container');
