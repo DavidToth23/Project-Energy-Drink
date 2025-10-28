@@ -26,7 +26,8 @@
         const SUPABASE_ANON_KEY = 'ZAMENI_ME_ANON_KEY';
 
         // 99% šanse da je globalna varijabla kreirana sa MALIM slovom
-        const supabase = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // KORISTIMO FUNKCIJU DIREKTNO, UZ PRETPOSTAVKU DA JE POSTALA GLOBALNA
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Funkcija za preuzimanje i prikaz liste
         async function fetchList() {
