@@ -15,8 +15,57 @@
         <p>Loading list...</p>
     </main>
     
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-    <script defer src="script.js"></script> 
+        <script>
+        // Tvoj JS kod ide ovde, ali moramo da koristimo funkciju iz Supabase-a
+        // Da izbegnemo ReferenceError, moramo koristiti 'supabase' (mala slova) za kreiranje klijenta
+        
+        // Povezuje se na Netlify Environment Variables
+        const SUPABASE_URL = 'ZAMENI_ME_URL';
+        const SUPABASE_ANON_KEY = 'ZAMENI_ME_ANON_KEY';
+
+        // 99% šanse da je globalna varijabla kreirana sa MALIM slovom
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Funkcija za preuzimanje i prikaz liste
+        async function fetchList() {
+            const listContainer = document.getElementById('list-container');
+            
+            // Test kôd bez JOIN-a (kao u Koraku 1)
+            let { data: drinks, error } = await supabase
+                .from('energy_drinks') 
+                .select('rank, name, brand_id') 
+                .order('rank', { ascending: true }); 
+
+            if (error) {
+                listContainer.innerHTML = `<p style="color: red;">Konekcioni problem: ${error.message}. Proveri RLS i ključeve!</p>`;
+                console.error("Supabase Error:", error);
+                return;
+            }
+
+            if (!drinks || drinks.length === 0) {
+                listContainer.innerHTML = '<p>Lista je prazna, ali je konekcija uspela.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            
+            drinks.forEach(item => {
+                const listItem = document.createElement('div');
+                listItem.className = 'list-item';
+
+                listItem.innerHTML = `
+                    <h2>${item.rank}. ${item.name}</h2>
+                    <p><strong>Brand ID:</strong> ${item.brand_id}</p>
+                    <span class="status"></span> 
+                `;
+
+                listContainer.appendChild(listItem);
+            });
+        }
+
+        fetchList();
+    </script>
 </body>
 </html>
